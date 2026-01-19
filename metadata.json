@@ -1,13 +1,14 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "organization": "Vue Community",
+  "date": "January 2026",
   "title": "Vue Best Practices",
-  "abstract": "Vue 2/3 性能优化最佳实践 - 包含异步优化、Bundle 优化、响应式优化、渲染优化等 10 大类别，为 AI Agents 和开发者提供结构化的性能优化知识库。",
+  "abstract": "Comprehensive performance optimization guide for Vue 2/3 and Nuxt applications, designed for AI agents and LLMs. Contains 46 rules across 10 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and Vue 2/3 compatibility notes to guide automated refactoring and code generation.",
   "lastUpdated": "2026-01-19",
   "authors": [
     {
       "name": "Vue Best Practices Contributors",
-      "url": "https://github.com/your-username/vue-best-practices"
+      "url": "https://github.com/ursazoo/vue-best-practices"
     }
   ],
   "keywords": [
@@ -21,56 +22,66 @@
     "ai-agents",
     "llm"
   ],
+  "references": [
+    "https://vuejs.org",
+    "https://v2.vuejs.org",
+    "https://nuxt.com",
+    "https://vueuse.org",
+    "https://github.com/shuding/better-all",
+    "https://github.com/svg/svgo",
+    "https://developer.mozilla.org/en-US/docs/Web/CSS/content-visibility",
+    "https://github.com/vercel-labs/agent-skills"
+  ],
   "categories": {
     "async": {
-      "name": "消除异步瀑布流",
+      "name": "Eliminate Async Waterfalls",
       "impact": "CRITICAL",
-      "description": "避免串行异步操作，通过并行请求、预加载和智能数据获取来消除请求瀑布流"
+      "description": "Avoid sequential async operations, eliminate request waterfalls through parallel requests, preloading, and smart data fetching"
     },
     "bundle": {
-      "name": "Bundle 大小优化",
+      "name": "Bundle Size Optimization",
       "impact": "CRITICAL",
-      "description": "减少 JavaScript bundle 大小，通过代码分割、Tree-shaking、动态导入和第三方库优化"
+      "description": "Reduce JavaScript bundle size through code splitting, tree-shaking, dynamic imports, and third-party library optimization"
     },
     "server": {
-      "name": "服务端性能",
+      "name": "Server-Side Performance",
       "impact": "HIGH",
-      "description": "优化 SSR/SSG 性能，包括缓存策略、并行数据获取和服务端渲染优化"
+      "description": "Optimize SSR/SSG performance, including caching strategies, parallel data fetching, and server-side rendering optimization"
     },
     "client": {
-      "name": "客户端数据获取",
+      "name": "Client-Side Data Fetching",
       "impact": "HIGH",
-      "description": "优化客户端 API 调用和数据获取策略，减少不必要的请求"
+      "description": "Optimize client-side API calls and data fetching strategies, reduce unnecessary requests"
     },
     "reactivity": {
-      "name": "响应式优化",
+      "name": "Reactivity Optimization",
       "impact": "MEDIUM-HIGH",
-      "description": "优化 Vue 的响应式系统使用，包括 computed、watch 的正确使用"
+      "description": "Optimize Vue's reactivity system usage, including proper use of computed and watch"
     },
     "rendering": {
-      "name": "渲染性能",
+      "name": "Rendering Performance",
       "impact": "MEDIUM",
-      "description": "优化组件渲染性能，包括虚拟滚动、条件渲染、keep-alive 等"
+      "description": "Optimize component rendering performance, including virtual scrolling, conditional rendering, keep-alive, etc."
     },
     "vue2": {
-      "name": "Vue 2 特有优化",
+      "name": "Vue 2 Specific Optimization",
       "impact": "MEDIUM",
-      "description": "Vue 2 特有的性能优化技巧"
+      "description": "Performance optimization techniques specific to Vue 2"
     },
     "vue3": {
-      "name": "Vue 3 特有优化",
+      "name": "Vue 3 Specific Optimization",
       "impact": "MEDIUM",
-      "description": "Vue 3 特有的性能优化技巧"
+      "description": "Performance optimization techniques specific to Vue 3"
     },
     "js": {
-      "name": "JavaScript 性能",
+      "name": "JavaScript Performance",
       "impact": "LOW-MEDIUM",
-      "description": "框架无关的 JavaScript 性能优化"
+      "description": "Framework-agnostic JavaScript performance optimization"
     },
     "advanced": {
-      "name": "高级模式",
+      "name": "Advanced Patterns",
       "impact": "LOW",
-      "description": "高级优化模式和技巧"
+      "description": "Advanced optimization patterns and techniques"
     }
   }
 }

@@ -1,77 +1,77 @@
 # Vue Best Practices - AI Agent Skill
 
-这是一个为 AI 编码助手优化的 Vue 性能最佳实践知识库。
+This is a Vue performance best practices knowledge base optimized for AI coding assistants.
 
-## 何时使用此 Skill
+## When to Use This Skill
 
-当你遇到以下场景时，应该参考此 Skill 中的规则：
+You should reference the rules in this Skill when encountering the following scenarios:
 
-1. **代码审查** - 检查 Vue 代码是否遵循性能最佳实践
-2. **性能优化** - 优化现有 Vue 应用的性能
-3. **重构建议** - 为代码重构提供基于最佳实践的建议
-4. **新功能开发** - 确保新代码从一开始就遵循最佳实践
-5. **Bug 修复** - 识别可能导致性能问题的代码模式
+1. **Code Review** - Check if Vue code follows performance best practices
+2. **Performance Optimization** - Optimize existing Vue application performance
+3. **Refactoring Suggestions** - Provide best practice-based suggestions for code refactoring
+4. **New Feature Development** - Ensure new code follows best practices from the start
+5. **Bug Fixes** - Identify code patterns that may cause performance issues
 
-## 使用方法
+## Usage
 
-### 作为 AI 编码助手
+### As an AI Coding Assistant
 
-1. 在审查或编写 Vue 代码时，自动参考 AGENTS.md 中的规则
-2. 识别代码中的性能反模式
-3. 提供具体的改进建议，包含正确的代码示例
-4. 根据影响等级优先修复 CRITICAL 和 HIGH 级别的问题
+1. Automatically reference rules in AGENTS.md when reviewing or writing Vue code
+2. Identify performance anti-patterns in code
+3. Provide specific improvement suggestions with correct code examples
+4. Prioritize fixing CRITICAL and HIGH level issues based on impact level
 
-### 规则优先级
+### Rule Priority
 
-按以下顺序应用规则：
+Apply rules in the following order:
 
-1. **CRITICAL** - 立即修复，影响最大
-   - 异步瀑布流
-   - Bundle 大小优化
+1. **CRITICAL** - Fix immediately, highest impact
+   - Async waterfalls
+   - Bundle size optimization
 
-2. **HIGH** - 优先处理
-   - 服务端性能
-   - 客户端数据获取
-   - keep-alive 缓存
-   - key 的正确使用
+2. **HIGH** - Priority handling
+   - Server-side performance
+   - Client-side data fetching
+   - keep-alive caching
+   - Proper use of key
 
-3. **MEDIUM-HIGH / MEDIUM** - 逐步优化
+3. **MEDIUM-HIGH / MEDIUM** - Gradual optimization
    - computed vs methods
-   - watch 优化
+   - watch optimization
    - v-if vs v-show
 
-4. **LOW-MEDIUM / LOW** - 增量改进
-   - JavaScript 性能优化
-   - 高级优化模式
+4. **LOW-MEDIUM / LOW** - Incremental improvements
+   - JavaScript performance optimization
+   - Advanced optimization patterns
 
-## 规则格式
+## Rule Format
 
-每条规则包含：
+Each rule contains:
 
 ```markdown
 ---
-title: 规则标题
+title: Rule Title
 impact: CRITICAL | HIGH | MEDIUM-HIGH | MEDIUM | LOW-MEDIUM | LOW
 tags: vue2, vue3, performance, ...
 ---
 
-## 规则说明
+## Rule Description
 
-简要说明...
+Brief explanation...
 
-**错误示例：**
-[代码示例]
+**Incorrect:**
+[Code example]
 
-**正确示例：**
-[代码示例]
+**Correct:**
+[Code example]
 
-**影响分析：**
-- 性能提升：...
-- 适用场景：...
-- 注意事项：...
+**Impact Analysis:**
+- Performance gain: ...
+- Use cases: ...
+- Considerations: ...
 ```
 
-## 框架覆盖
+## Framework Coverage
 
 - ✅ Vue 2
 - ✅ Vue 3 Options API
@@ -79,33 +79,33 @@ tags: vue2, vue3, performance, ...
 - ✅ Nuxt 2
 - ✅ Nuxt 3
 
-## 最佳实践原则
+## Best Practice Principles
 
-1. **可测量的优化** - 每条规则都应该有可测量的性能影响
-2. **实用性优先** - 关注实际项目中常见的性能问题
-3. **渐进式应用** - 按照影响等级逐步优化
-4. **保持简单** - 避免过度优化和不必要的复杂度
+1. **Measurable Optimization** - Every rule should have measurable performance impact
+2. **Practicality First** - Focus on common performance issues in real projects
+3. **Progressive Application** - Optimize gradually according to impact level
+4. **Keep It Simple** - Avoid over-optimization and unnecessary complexity
 
-## 示例对话
+## Example Conversation
 
-**用户**: "帮我优化这段 Vue 代码"
+**User**: "Help me optimize this Vue code"
 
-**AI 助手**:
-1. 分析代码，识别性能问题
-2. 参考 AGENTS.md 中的相关规则
-3. 提供优化建议，按照影响等级排序
-4. 给出具体的代码修改示例
-5. 解释优化的收益
+**AI Assistant**:
+1. Analyze code and identify performance issues
+2. Reference relevant rules in AGENTS.md
+3. Provide optimization suggestions sorted by impact level
+4. Give specific code modification examples
+5. Explain the benefits of optimization
 
-## 持续更新
+## Continuous Updates
 
-此 Skill 会持续更新，包含：
-- 新的性能优化技巧
-- Vue 生态系统的最新最佳实践
-- 社区反馈和贡献
+This Skill is continuously updated, including:
+- New performance optimization techniques
+- Latest best practices from Vue ecosystem
+- Community feedback and contributions
 
 ---
 
-**版本**: 1.0.0
-**最后更新**: 2026-01-19
-**维护者**: Vue Best Practices Contributors
+**Version**: 1.0.0
+**Last Updated**: 2026-01-19
+**Maintainers**: Vue Best Practices Contributors
