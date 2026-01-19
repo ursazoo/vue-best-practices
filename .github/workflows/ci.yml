@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-validate:
+    name: Build and Validate Rules
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate rule files
+        run: npm run validate
+
+      - name: Build AGENTS.md
+        run: npm run build
+
+      - name: Extract test cases
+        run: npm run extract-tests
+
+      - name: Check for uncommitted changes
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            echo "Error: Build generated uncommitted changes"
+            echo "Please run 'npm run build' locally and commit the changes"
+            git status
+            git diff
+            exit 1
+          fi
+
+      - name: Upload AGENTS.md artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agents-md
+          path: AGENTS.md
+
+      - name: Upload test-cases.json artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-cases
+          path: test-cases.json
+
+  lint-markdown:
+    name: Lint Markdown Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Check markdown links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          config-file: '.github/markdown-link-check.json'
+          use-quiet-mode: 'yes'

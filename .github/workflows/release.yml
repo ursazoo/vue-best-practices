@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and validate
+        run: |
+          npm run build
+          npm run validate
+          npm run extract-tests
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Extract release notes
+        id: extract-release-notes
+        run: |
+          # Extract release notes from CHANGELOG.md
+          VERSION=${{ steps.version.outputs.VERSION }}
+          awk -v ver="$VERSION" '
+            /^## \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next } }
+            p && /^## \[/ { exit }
+            p
+          ' CHANGELOG.md > release-notes.md
+
+          # Add installation instructions
+          echo "" >> release-notes.md
+          echo "## Installation" >> release-notes.md
+          echo "" >> release-notes.md
+          echo '```bash' >> release-notes.md
+          echo "git clone https://github.com/${{ github.repository }}.git" >> release-notes.md
+          echo "cd vue-best-practices" >> release-notes.md
+          echo "npm install" >> release-notes.md
+          echo "npm run build" >> release-notes.md
+          echo '```' >> release-notes.md
+          echo "" >> release-notes.md
+          echo "## Full Documentation" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "See [CHANGELOG.md](CHANGELOG.md) for complete details." >> release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release-notes.md
+          files: |
+            AGENTS.md
+            test-cases.json
+            CHANGELOG.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Announce on Discord (Optional)
+        if: success()
+        run: |
+          if [ -n "${{ secrets.DISCORD_WEBHOOK }}" ]; then
+            curl -X POST "${{ secrets.DISCORD_WEBHOOK }}" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "embeds": [{
+                  "title": "Vue Best Practices ${{ steps.version.outputs.VERSION }} Released! 🚀",
+                  "description": "Check out the latest release with new rules and improvements.",
+                  "url": "https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.VERSION }}",
+                  "color": 5814783
+                }]
+              }'
+          fi
