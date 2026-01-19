@@ -5,6 +5,9 @@
     },
     {
       "pattern": "^https://github.com/ursazoo"
+    },
+    {
+      "pattern": "^https://github.com/your-username"
     }
   ],
   "replacementPatterns": [],
