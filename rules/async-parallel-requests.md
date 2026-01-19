@@ -1,22 +1,22 @@
 ---
-title: 并行请求而非串行
+title: Parallel Requests Instead of Sequential
 impact: CRITICAL
-impactDescription: 串行请求会导致请求瀑布流，严重影响页面加载速度
+impactDescription: Sequential requests create request waterfalls, severely impacting page load performance
 tags: async, api, nuxt, performance
 ---
 
-## 并行请求而非串行
+## Parallel Requests Instead of Sequential
 
-将独立的异步请求并行执行，而不是串行等待。这是最常见也是影响最大的性能问题之一。
+Execute independent async requests in parallel rather than waiting for each one sequentially. This is one of the most common and impactful performance issues.
 
-**错误示例（串行请求）：**
+**Incorrect (Sequential Requests):**
 
 ```vue
 <script setup>
 // Vue 3 Composition API
 const userData = await $fetch('/api/user')
-const posts = await $fetch('/api/posts')  // 等待 userData 完成后才开始
-const comments = await $fetch('/api/comments')  // 再等待 posts 完成
+const posts = await $fetch('/api/posts')  // Waits for userData to complete
+const comments = await $fetch('/api/comments')  // Waits for posts to complete
 </script>
 ```
 
@@ -24,12 +24,12 @@ const comments = await $fetch('/api/comments')  // 再等待 posts 完成
 // Vue 2 + async/await
 async created() {
   this.userData = await this.$axios.$get('/api/user')
-  this.posts = await this.$axios.$get('/api/posts')  // 串行执行
+  this.posts = await this.$axios.$get('/api/posts')  // Sequential execution
   this.comments = await this.$axios.$get('/api/comments')
 }
 ```
 
-**正确示例（并行请求）：**
+**Correct (Parallel Requests):**
 
 ```vue
 <script setup>
@@ -63,13 +63,13 @@ async created() {
 const { data: userData } = await useFetch('/api/user')
 const { data: posts } = await useFetch('/api/posts')
 const { data: comments } = await useFetch('/api/comments')
-// Nuxt 会自动并行这些 useFetch 调用
+// Nuxt automatically parallelizes these useFetch calls
 </script>
 ```
 
-**影响分析：**
-- 性能提升：3 个各需 200ms 的请求，串行需要 600ms，并行只需 200ms
-- 适用场景：所有不相互依赖的数据获取场景
-- 注意事项：确保请求之间真的没有依赖关系
+**Impact Analysis:**
+- Performance gain: 3 requests of 200ms each take 600ms sequentially, but only 200ms in parallel
+- Use cases: All data fetching scenarios where requests don't depend on each other
+- Considerations: Ensure requests truly have no dependencies
 
-参考资料：[MDN Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)
+Reference: [MDN Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all)

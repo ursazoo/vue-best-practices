@@ -1,22 +1,22 @@
 ---
-title: 避免在循环中使用内联函数
+title: Avoid Inline Functions in Loops
 impact: MEDIUM
-impactDescription: v-for 中的内联函数会在每次渲染时重新创建，影响性能
+impactDescription: Inline functions in v-for are recreated on every render, affecting performance
 tags: vue2, vue3, rendering, v-for, performance
 ---
 
-## 避免在循环中使用内联函数
+## Avoid Inline Functions in Loops
 
-在 `v-for` 循环中避免使用内联函数和箭头函数，它们会在每次渲染时重新创建。
+Avoid using inline functions and arrow functions in `v-for` loops, as they are recreated on every render.
 
-**错误示例：**
+**Incorrect:**
 
 ```vue
 <template>
-  <!-- 每次渲染都创建新函数 -->
+  <!-- New function created on every render -->
   <div v-for="item in items" :key="item.id">
     <button @click="() => handleClick(item.id)">
-      删除
+      Delete
     </button>
     <span>{{ formatName(item.name) }}</span>
   </div>
@@ -25,23 +25,23 @@ tags: vue2, vue3, rendering, v-for, performance
 
 ```vue
 <template>
-  <!-- 每次渲染都创建新的过滤函数 -->
+  <!-- New filter function created on every render -->
   <div v-for="item in items.filter(i => i.active)" :key="item.id">
     {{ item.name }}
   </div>
 </template>
 ```
 
-**正确示例：**
+**Correct:**
 
 ```vue
 <template>
   <div v-for="item in items" :key="item.id">
-    <!-- 使用方法引用 -->
+    <!-- Use method reference -->
     <button @click="handleClick(item.id)">
-      删除
+      Delete
     </button>
-    <!-- 使用 computed 或 methods -->
+    <!-- Use computed or methods -->
     <span>{{ formatName(item.name) }}</span>
   </div>
 </template>
@@ -50,7 +50,7 @@ tags: vue2, vue3, rendering, v-for, performance
 export default {
   methods: {
     handleClick(id) {
-      // 处理逻辑
+      // Handle logic
     },
     formatName(name) {
       return name.toUpperCase()
@@ -62,7 +62,7 @@ export default {
 
 ```vue
 <template>
-  <!-- 使用 computed 过滤 -->
+  <!-- Use computed for filtering -->
   <div v-for="item in activeItems" :key="item.id">
     {{ item.name }}
   </div>
@@ -86,14 +86,14 @@ import { ref, computed } from 'vue'
 
 const items = ref([])
 
-// 使用 computed 缓存过滤结果
+// Use computed to cache filter results
 const activeItems = computed(() =>
   items.value.filter(i => i.active)
 )
 
-// 定义在外层，不会重复创建
+// Define at outer level, won't be recreated
 function handleClick(id) {
-  console.log('删除', id)
+  console.log('Delete', id)
 }
 
 function formatName(name) {
@@ -103,16 +103,16 @@ function formatName(name) {
 
 <template>
   <div v-for="item in activeItems" :key="item.id">
-    <button @click="handleClick(item.id)">删除</button>
+    <button @click="handleClick(item.id)">Delete</button>
     <span>{{ formatName(item.name) }}</span>
   </div>
 </template>
 ```
 
-**子组件优化：**
+**Child Component Optimization:**
 
 ```vue
-<!-- 错误：每次都传递新函数 -->
+<!-- Wrong: passing new function every time -->
 <template>
   <child-item
     v-for="item in items"
@@ -124,7 +124,7 @@ function formatName(name) {
 ```
 
 ```vue
-<!-- 正确：传递 id，在子组件触发 -->
+<!-- Correct: pass id, emit from child component -->
 <template>
   <child-item
     v-for="item in items"
@@ -134,7 +134,7 @@ function formatName(name) {
   />
 </template>
 
-<!-- 子组件 -->
+<!-- Child component -->
 <script setup>
 const props = defineProps(['item'])
 const emit = defineEmits(['delete'])
@@ -145,9 +145,9 @@ function onDelete() {
 </script>
 ```
 
-**影响分析：**
-- 性能提升：大列表（100+ 项）时差异明显
-- 适用场景：v-for 循环、事件处理、props 传递
-- 注意事项：方法引用要注意 this 绑定（Vue 3 不需要）
+**Impact Analysis:**
+- Performance gain: Noticeable difference with large lists (100+ items)
+- Use cases: v-for loops, event handling, props passing
+- Considerations: Watch for `this` binding with method references (not needed in Vue 3)
 
-参考资料：[Vue 列表渲染](https://cn.vuejs.org/guide/essentials/list.html)
+Reference: [Vue List Rendering](https://vuejs.org/guide/essentials/list.html)

@@ -1,32 +1,32 @@
 ---
-title: 使用 Object.freeze 冻结静态数据
+title: Use Object.freeze to Freeze Static Data
 impact: HIGH
-impactDescription: Vue 2 中冻结大型只读数据可以避免响应式转换的开销
+impactDescription: In Vue 2, freezing large read-only data avoids reactive conversion overhead
 tags: vue2, reactivity, performance
 ---
 
-## 使用 Object.freeze 冻结静态数据 (Vue 2)
+## Use Object.freeze to Freeze Static Data (Vue 2)
 
-在 Vue 2 中，使用 `Object.freeze()` 冻结不需要响应式的大型数据，避免 Vue 的响应式系统处理它们。
+In Vue 2, use `Object.freeze()` to freeze large data that doesn't need to be reactive, avoiding Vue's reactivity system processing them.
 
-**注意：Vue 3 的响应式系统已优化，此技巧主要适用于 Vue 2。**
+**Note: Vue 3's reactivity system is already optimized, this technique is mainly for Vue 2.**
 
-**错误示例：**
+**Incorrect:**
 
 ```vue
 <script>
 export default {
   data() {
     return {
-      // 大型静态数据，Vue 2 会递归遍历添加 getter/setter
+      // Large static data, Vue 2 will recursively traverse to add getter/setter
       staticData: [
         { id: 1, name: 'Item 1', description: '...' },
-        // ... 1000+ 条数据
+        // ... 1000+ items
       ],
       config: {
         theme: 'dark',
-        language: 'zh-CN',
-        features: [/* 大量配置项 */]
+        language: 'en-US',
+        features: [/* many config items */]
       }
     }
   }
@@ -34,22 +34,22 @@ export default {
 </script>
 ```
 
-**正确示例：**
+**Correct:**
 
 ```vue
 <script>
 export default {
   data() {
     return {
-      // 冻结大型静态数据
+      // Freeze large static data
       staticData: Object.freeze([
         { id: 1, name: 'Item 1', description: '...' },
-        // ... 1000+ 条数据
+        // ... 1000+ items
       ]),
       config: Object.freeze({
         theme: 'dark',
-        language: 'zh-CN',
-        features: [/* 大量配置项 */]
+        language: 'en-US',
+        features: [/* many config items */]
       })
     }
   }
@@ -58,7 +58,7 @@ export default {
 ```
 
 ```js
-// 或者在组件外定义
+// Or define outside component
 const STATIC_DATA = Object.freeze([/* ... */])
 const CONFIG = Object.freeze({/* ... */})
 
@@ -73,7 +73,7 @@ export default {
 ```
 
 ```js
-// 深度冻结嵌套对象
+// Deep freeze nested objects
 function deepFreeze(obj) {
   Object.freeze(obj)
   Object.values(obj).forEach(value => {
@@ -99,25 +99,25 @@ export default {
 }
 ```
 
-**影响分析：**
-- 性能提升：对于 1000+ 条数据，可减少 50-70% 的初始化时间
-- 适用场景：配置数据、静态列表、常量表
-- 注意事项：
-  - 冻结后数据无法修改
-  - 只对 Vue 2 有显著效果
-  - Vue 3 已自动优化，不太需要此技巧
+**Impact Analysis:**
+- Performance gain: For 1000+ items, can reduce initialization time by 50-70%
+- Use cases: Configuration data, static lists, constant tables
+- Considerations:
+  - Data cannot be modified after freezing
+  - Only has significant effect in Vue 2
+  - Vue 3 is already optimized, less need for this technique
 
-**Vue 3 对比：**
+**Vue 3 Comparison:**
 
-Vue 3 使用 Proxy，响应式开销已大幅降低，但仍可使用 `shallowRef` 或 `shallowReactive`：
+Vue 3 uses Proxy, reactive overhead is significantly reduced, but can still use `shallowRef` or `shallowReactive`:
 
 ```vue
 <script setup>
 import { shallowRef } from 'vue'
 
-// Vue 3: 使用 shallowRef 避免深层响应
-const staticData = shallowRef([/* 大型数据 */])
+// Vue 3: use shallowRef to avoid deep reactivity
+const staticData = shallowRef([/* large data */])
 </script>
 ```
 
-参考资料：[Object.freeze](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)
+Reference: [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)

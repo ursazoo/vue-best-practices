@@ -1,169 +1,237 @@
 ---
-title: 正确使用 watch 避免不必要的监听
+title: Optimize Watch with Lazy and Deep Options
 impact: MEDIUM
-impactDescription: 不当的 watch 使用会导致性能问题和难以追踪的 bug
-tags: vue2, vue3, watch, reactivity, performance
+impactDescription: reduces unnecessary watcher execution
+tags: reactivity, watch, performance, optimization
 ---
 
-## 正确使用 watch 避免不必要的监听
+## Optimize Watch with Lazy and Deep Options
 
-合理使用 `watch`，避免过度监听和循环依赖。
+Configure watchers properly to avoid unnecessary executions and deep traversal overhead.
 
-**错误示例：**
+**Incorrect (immediate execution + deep watching):**
 
 ```vue
-<script>
-export default {
-  data() {
-    return {
-      firstName: '',
-      lastName: '',
-      fullName: ''
-    }
+<script setup>
+const user = ref({
+  profile: { name: '', email: '' },
+  settings: { theme: 'light', lang: 'en' },
+  // ... 50 more nested properties
+})
+
+// Runs immediately on mount + deeply watches ALL properties
+watch(user, (newVal) => {
+  console.log('User changed:', newVal)
+}, { immediate: true, deep: true })
+
+// Performance issues:
+// 1. Executes on mount even when not needed
+// 2. Watches every nested property change
+</script>
+```
+
+**Correct (targeted watching):**
+
+```vue
+<script setup>
+const user = ref({
+  profile: { name: '', email: '' },
+  settings: { theme: 'light', lang: 'en' }
+})
+
+// Watch specific properties only
+watch(() => user.value.profile.name, (newName) => {
+  console.log('Name changed:', newName)
+})
+
+// Or use computed for derived values
+const userName = computed(() => user.value.profile.name)
+
+watch(userName, (newName) => {
+  console.log('Name changed:', newName)
+})
+</script>
+```
+
+**Use watchEffect for reactive dependencies:**
+
+```vue
+<script setup>
+// Incorrect: manual dependency tracking
+watch([user, settings], ([newUser, newSettings]) => {
+  updateUI(newUser, newSettings)
+})
+
+// Correct: automatic dependency tracking
+watchEffect(() => {
+  // Only tracks properties actually accessed
+  updateUI(user.value, settings.value)
+})
+</script>
+```
+
+**Deep watch only when necessary:**
+
+```vue
+<script setup>
+const form = ref({
+  name: '',
+  email: '',
+  address: {
+    street: '',
+    city: '',
+    country: ''
+  }
+})
+
+// Incorrect: deep watch entire form
+watch(form, saveFormDraft, { deep: true })
+// Triggers on ANY nested property change
+
+// Correct: watch specific fields
+watch(
+  () => [form.value.name, form.value.email],
+  saveFormDraft
+)
+
+// Or use computed for specific paths
+const addressData = computed(() => form.value.address)
+watch(addressData, saveAddressDraft, { deep: true })
+</script>
+```
+
+**Flush timing optimization:**
+
+```vue
+<script setup>
+const count = ref(0)
+const dom = ref<HTMLElement | null>(null)
+
+// Incorrect: watch runs before DOM updates
+watch(count, () => {
+  console.log(dom.value?.offsetHeight) // Old value!
+})
+
+// Correct: flush: 'post' runs after DOM updates
+watch(count, () => {
+  console.log(dom.value?.offsetHeight) // Updated value!
+}, { flush: 'post' })
+
+// Or use watchPostEffect
+watchPostEffect(() => {
+  console.log(dom.value?.offsetHeight)
+})
+</script>
+```
+
+**Debounce expensive watchers:**
+
+```vue
+<script setup>
+import { watchDebounced } from '@vueuse/core'
+
+const searchQuery = ref('')
+
+// Incorrect: executes on every keystroke
+watch(searchQuery, async (query) => {
+  await expensiveSearchAPI(query)
+})
+
+// Correct: debounced watch
+watchDebounced(
+  searchQuery,
+  async (query) => {
+    await expensiveSearchAPI(query)
   },
-  watch: {
-    // 错误：应该用 computed
-    firstName(val) {
-      this.fullName = val + ' ' + this.lastName
-    },
-    lastName(val) {
-      this.fullName = this.firstName + ' ' + val
+  { debounce: 500 }
+)
+</script>
+```
+
+**Stop watchers when not needed:**
+
+```vue
+<script setup>
+const isActive = ref(true)
+
+// Watch returns a stop function
+const stopWatch = watch(someValue, () => {
+  // Expensive operation
+})
+
+// Stop watching when inactive
+watch(isActive, (active) => {
+  if (!active) {
+    stopWatch()
+  }
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  stopWatch()
+})
+</script>
+```
+
+**Watch once pattern:**
+
+```vue
+<script setup>
+import { watchOnce } from '@vueuse/core'
+
+// Run once when condition becomes true
+watchOnce(
+  () => user.value?.isLoaded,
+  (isLoaded) => {
+    if (isLoaded) {
+      initializeApp()
     }
   }
-}
+)
 </script>
 ```
 
-```vue
-<script setup>
-import { ref, watch } from 'vue'
+**Comparison of watch options:**
 
-const count = ref(0)
+```typescript
+// 1. Immediate execution
+watch(source, callback, { immediate: true })
+// Runs callback immediately + on changes
 
-// 错误：立即监听但没有必要
-watch(count, (val) => {
-  console.log(val)
-}, { immediate: true, deep: true })  // deep 对 ref 数字无意义
-</script>
+// 2. Deep watching
+watch(source, callback, { deep: true })
+// Watches all nested properties
+
+// 3. Flush timing
+watch(source, callback, { flush: 'pre' })  // Before DOM updates (default)
+watch(source, callback, { flush: 'post' }) // After DOM updates
+watch(source, callback, { flush: 'sync' }) // Synchronous (use rarely)
+
+// 4. Multiple sources
+watch([source1, source2], ([new1, new2]) => {})
+
+// 5. Getter function
+watch(() => obj.nested.value, callback)
 ```
 
-```vue
-<script setup>
-// 错误：监听了大型对象的所有属性
-const state = reactive({
-  user: { /* 大型对象 */ },
-  settings: { /* 大型对象 */ },
-  data: { /* 大型对象 */ }
-})
+**Best practices:**
 
-watch(state, () => {
-  // 任何属性变化都会触发
-}, { deep: true })  // 性能开销大
-</script>
-```
+✅ **Do:**
+- Watch specific properties, not entire objects
+- Use `watchEffect` for automatic dependency tracking
+- Use `flush: 'post'` when accessing DOM
+- Debounce expensive operations
+- Stop watchers when not needed
 
-**正确示例：**
+❌ **Don't:**
+- Use `deep: true` unless necessary
+- Use `immediate: true` without checking
+- Watch large objects without specifying paths
+- Forget to clean up watchers
 
-```vue
-<script>
-export default {
-  data() {
-    return {
-      firstName: '',
-      lastName: ''
-    }
-  },
-  // 正确：使用 computed
-  computed: {
-    fullName() {
-      return `${this.firstName} ${this.lastName}`
-    }
-  }
-}
-</script>
-```
+**Impact Analysis:**
+- Performance gain: Significantly reduces watcher overhead
+- Use cases: Form validation, API calls, DOM measurements
+- Considerations: Choose appropriate flush timing and depth
 
-```vue
-<script setup>
-import { ref, watch } from 'vue'
-
-const count = ref(0)
-
-// 正确：只在必要时使用选项
-watch(count, (val) => {
-  console.log(val)
-})  // 默认 lazy，不需要 immediate
-
-// 正确：只监听需要的属性
-const state = reactive({
-  user: {},
-  settings: {},
-  data: {}
-})
-
-watch(() => state.user.name, (newName) => {
-  // 只监听 user.name
-})
-</script>
-```
-
-```vue
-<script setup>
-// 正确：使用 watchEffect 自动追踪依赖
-import { ref, watchEffect } from 'vue'
-
-const count = ref(0)
-const doubled = ref(0)
-
-watchEffect(() => {
-  // 自动追踪 count 的变化
-  doubled.value = count.value * 2
-})
-</script>
-```
-
-**Vue 3 watch vs watchEffect:**
-
-```vue
-<script setup>
-import { ref, watch, watchEffect } from 'vue'
-
-const x = ref(0)
-const y = ref(0)
-
-// watch: 明确指定监听源
-watch([x, y], ([newX, newY]) => {
-  console.log(`x: ${newX}, y: ${newY}`)
-})
-
-// watchEffect: 自动追踪依赖
-watchEffect(() => {
-  console.log(`x: ${x.value}, y: ${y.value}`)
-})
-</script>
-```
-
-**性能优化技巧：**
-
-```vue
-<script setup>
-// 使用 flush: 'post' 延迟到 DOM 更新后
-watch(source, callback, { flush: 'post' })
-
-// 使用 flush: 'sync' 同步执行（慎用）
-watch(source, callback, { flush: 'sync' })
-
-// 停止监听
-const stop = watch(source, callback)
-// 在某个时机停止
-stop()
-</script>
-```
-
-**适用场景：**
-- ✅ 执行异步操作（API 调用）
-- ✅ 访问 DOM
-- ✅ 有副作用的操作
-- ❌ 简单的派生值（用 computed）
-
-参考资料：[Vue 侦听器](https://cn.vuejs.org/guide/essentials/watchers.html)
+Reference: [Vue Watch](https://vuejs.org/guide/essentials/watchers.html)

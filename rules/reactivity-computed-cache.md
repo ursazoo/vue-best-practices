@@ -1,26 +1,26 @@
 ---
-title: 使用 computed 缓存计算结果
+title: Use Computed to Cache Calculated Results
 impact: HIGH
-impactDescription: computed 会缓存结果，避免重复计算，比 methods 和直接计算更高效
+impactDescription: Computed properties cache results, avoiding repeated calculations, more efficient than methods
 tags: vue2, vue3, computed, reactivity, performance
 ---
 
-## 使用 computed 缓存计算结果
+## Use Computed to Cache Calculated Results
 
-使用 `computed` 而不是 `methods` 或模板内直接计算，利用 Vue 的缓存机制避免重复计算。
+Use `computed` instead of `methods` or inline calculations in templates to leverage Vue's caching mechanism and avoid repeated calculations.
 
-**错误示例（重复计算）：**
+**Incorrect (Repeated Calculations):**
 
 ```vue
 <template>
-  <!-- 每次渲染都会执行 filter + sort + slice -->
+  <!-- Filter + sort + slice runs on every render -->
   <div v-for="item in items.filter(i => i.active).sort((a,b) => a.price - b.price).slice(0, 10)">
     {{ item.name }}
   </div>
 
-  <!-- methods 每次渲染都会执行 -->
-  <div>总价：{{ calculateTotal() }}</div>
-  <div>折扣：{{ calculateTotal() * 0.9 }}</div>  <!-- 又算了一遍 -->
+  <!-- Methods run on every render -->
+  <div>Total: {{ calculateTotal() }}</div>
+  <div>Discount: {{ calculateTotal() * 0.9 }}</div>  <!-- Calculated again -->
 </template>
 
 <script>
@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     calculateTotal() {
-      console.log('计算总价')  // 会看到多次输出
+      console.log('Calculating total')  // Will see multiple outputs
       return this.items.reduce((sum, item) => sum + item.price, 0)
     }
   }
@@ -41,9 +41,9 @@ export default {
 ```
 
 ```vue
-<!-- Vue 3 错误示例 -->
+<!-- Vue 3 incorrect example -->
 <template>
-  <div v-for="item in filterAndSort()">  <!-- 每次渲染都执行 -->
+  <div v-for="item in filterAndSort()">  <!-- Executes on every render -->
     {{ item.name }}
   </div>
 </template>
@@ -54,7 +54,7 @@ import { ref } from 'vue'
 const items = ref([])
 
 function filterAndSort() {
-  console.log('过滤排序')  // 会频繁输出
+  console.log('Filtering and sorting')  // Will output frequently
   return items.value
     .filter(i => i.active)
     .sort((a, b) => a.price - b.price)
@@ -62,17 +62,17 @@ function filterAndSort() {
 </script>
 ```
 
-**正确示例（使用 computed 缓存）：**
+**Correct (Using Computed Caching):**
 
 ```vue
 <template>
-  <!-- computed 只在依赖变化时重新计算 -->
+  <!-- Computed only recalculates when dependencies change -->
   <div v-for="item in topActiveItems">
     {{ item.name }}
   </div>
 
-  <div>总价：{{ total }}</div>
-  <div>折扣：{{ total * 0.9 }}</div>  <!-- 使用缓存的 total -->
+  <div>Total: {{ total }}</div>
+  <div>Discount: {{ total * 0.9 }}</div>  <!-- Uses cached total -->
 </template>
 
 <script>
@@ -90,7 +90,7 @@ export default {
         .slice(0, 10)
     },
     total() {
-      console.log('计算总价')  // 只在 items 变化时输出一次
+      console.log('Calculating total')  // Only outputs once when items change
       return this.items.reduce((sum, item) => sum + item.price, 0)
     }
   }
@@ -106,7 +106,7 @@ import { ref, computed } from 'vue'
 const items = ref([])
 
 const topActiveItems = computed(() => {
-  console.log('过滤排序')  // 只在 items 变化时执行
+  console.log('Filtering and sorting')  // Only executes when items change
   return items.value
     .filter(i => i.active)
     .sort((a, b) => a.price - b.price)
@@ -122,19 +122,19 @@ const total = computed(() =>
   <div v-for="item in topActiveItems" :key="item.id">
     {{ item.name }}
   </div>
-  <div>总价：{{ total }}</div>
-  <div>折扣：{{ total * 0.9 }}</div>
+  <div>Total: {{ total }}</div>
+  <div>Discount: {{ total * 0.9 }}</div>
 </template>
 ```
 
-**影响分析：**
-- 性能提升：避免重复计算，特别是在数据量大或计算复杂时效果显著
-- 适用场景：任何需要根据响应式数据派生新值的场景
-- 注意事项：computed 应该是纯函数，不要有副作用
+**Impact Analysis:**
+- Performance gain: Avoids repeated calculations, especially significant with large datasets or complex calculations
+- Use cases: Any scenario requiring derived values from reactive data
+- Considerations: Computed should be pure functions without side effects
 
-**何时使用 methods：**
-- 需要传递参数
-- 需要每次都执行（如提交表单）
-- 有副作用的操作
+**When to Use Methods:**
+- Need to pass parameters
+- Need to execute every time (like form submission)
+- Operations with side effects
 
-参考资料：[Vue Computed 属性](https://cn.vuejs.org/guide/essentials/computed.html)
+Reference: [Vue Computed Properties](https://vuejs.org/guide/essentials/computed.html)
