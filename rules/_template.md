@@ -1,35 +1,35 @@
 ---
-title: 规则标题
+title: Rule Title
 impact: MEDIUM
-impactDescription: 可选的影响描述
+impactDescription: Optional impact description
 tags: vue3, composition-api, performance
 ---
 
-## 规则标题
+## Rule Title
 
-简要说明这个规则的重要性和它解决的问题。
+Brief explanation of the importance of this rule and the problem it solves.
 
-**错误示例（描述错误原因）：**
-
-```vue
-<script setup>
-// 错误的代码示例
-</script>
-```
-
-**正确示例（描述正确做法）：**
+**Incorrect (Describe why it's wrong):**
 
 ```vue
 <script setup>
-// 正确的代码示例
+// Incorrect code example
 </script>
 ```
 
-可选的额外说明文字，解释为什么这样做更好。
+**Correct (Describe the right approach):**
 
-**影响分析：**
-- 性能提升：描述具体的性能改进
-- 适用场景：说明在什么情况下应用这个规则
-- 注意事项：需要注意的边界情况
+```vue
+<script setup>
+// Correct code example
+</script>
+```
 
-参考资料：[链接文字](https://example.com)
+Optional additional explanation of why this approach is better.
+
+**Impact Analysis:**
+- Performance gain: Describe specific performance improvements
+- Use cases: Explain when to apply this rule
+- Considerations: Note any edge cases to be aware of
+
+Reference: [Link Text](https://example.com)
