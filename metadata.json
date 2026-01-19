@@ -1,0 +1,76 @@
+{
+  "version": "1.0.0",
+  "organization": "Vue Community",
+  "title": "Vue Best Practices",
+  "abstract": "Vue 2/3 性能优化最佳实践 - 包含异步优化、Bundle 优化、响应式优化、渲染优化等 10 大类别，为 AI Agents 和开发者提供结构化的性能优化知识库。",
+  "lastUpdated": "2026-01-19",
+  "authors": [
+    {
+      "name": "Vue Best Practices Contributors",
+      "url": "https://github.com/your-username/vue-best-practices"
+    }
+  ],
+  "keywords": [
+    "vue",
+    "vue2",
+    "vue3",
+    "nuxt",
+    "performance",
+    "optimization",
+    "best-practices",
+    "ai-agents",
+    "llm"
+  ],
+  "categories": {
+    "async": {
+      "name": "消除异步瀑布流",
+      "impact": "CRITICAL",
+      "description": "避免串行异步操作，通过并行请求、预加载和智能数据获取来消除请求瀑布流"
+    },
+    "bundle": {
+      "name": "Bundle 大小优化",
+      "impact": "CRITICAL",
+      "description": "减少 JavaScript bundle 大小，通过代码分割、Tree-shaking、动态导入和第三方库优化"
+    },
+    "server": {
+      "name": "服务端性能",
+      "impact": "HIGH",
+      "description": "优化 SSR/SSG 性能，包括缓存策略、并行数据获取和服务端渲染优化"
+    },
+    "client": {
+      "name": "客户端数据获取",
+      "impact": "HIGH",
+      "description": "优化客户端 API 调用和数据获取策略，减少不必要的请求"
+    },
+    "reactivity": {
+      "name": "响应式优化",
+      "impact": "MEDIUM-HIGH",
+      "description": "优化 Vue 的响应式系统使用，包括 computed、watch 的正确使用"
+    },
+    "rendering": {
+      "name": "渲染性能",
+      "impact": "MEDIUM",
+      "description": "优化组件渲染性能，包括虚拟滚动、条件渲染、keep-alive 等"
+    },
+    "vue2": {
+      "name": "Vue 2 特有优化",
+      "impact": "MEDIUM",
+      "description": "Vue 2 特有的性能优化技巧"
+    },
+    "vue3": {
+      "name": "Vue 3 特有优化",
+      "impact": "MEDIUM",
+      "description": "Vue 3 特有的性能优化技巧"
+    },
+    "js": {
+      "name": "JavaScript 性能",
+      "impact": "LOW-MEDIUM",
+      "description": "框架无关的 JavaScript 性能优化"
+    },
+    "advanced": {
+      "name": "高级模式",
+      "impact": "LOW",
+      "description": "高级优化模式和技巧"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "vue-best-practices",
+  "version": "1.0.0",
+  "description": "Vue 性能优化最佳实践 - 为 AI Agents 和开发者优化的结构化知识库",
+  "type": "module",
+  "scripts": {
+    "build": "tsx src/build.ts",
+    "validate": "tsx src/validate.ts",
+    "extract-tests": "tsx src/extract-tests.ts",
+    "dev": "npm run validate && npm run build"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "vue2",
+    "performance",
+    "best-practices",
+    "optimization",
+    "ai-agents",
+    "llm"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
